@@ -1,0 +1,3 @@
+hengebytes_settings_index:
+    path: /settings
+    controller: Hengebytes\SettingBundle\Controller\SettingController::indexAction

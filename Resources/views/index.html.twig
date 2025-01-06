@@ -1,0 +1,83 @@
+{% block content %}
+    <div class="bootstrap-wrapper">
+        {% if errors is defined %}
+            {% for error in errors %}
+                <div class="alert alert-danger">
+                    {{ error|trans([], 'settings') }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if feedback is defined and feedback %}
+            <div class="alert alert-success">
+                {{ feedback|trans([], 'settings') }}
+            </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('hengebytes_settings_index') }}"
+                {% if is_production_env %}
+                    onsubmit="return prompt({{ 'title.prompt'|trans([], 'settings') }} + window.location.host) === window.location.host"
+                {% endif %}
+        >
+            <h2 class="h3  u-margin-t-m">{{ 'title.index'|trans([], 'settings') }}</h2>
+            {% for group, settings in grouped_settings %}
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ group }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-condensed u-margin-b-n">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{{ 'form.label.name'|trans([], 'settings') }}</th>
+                                <th>{{ 'form.label.value'|trans([], 'settings') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody class="existing-settings">
+                            {% for setting in settings %}
+                                <tr>
+                                    <td>
+                                        <div class="checkbox u-margin-v-n">
+                                            <input type="checkbox" name="selected_settings[]" value="{{ setting.name }}"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control input-sm" type="text" name="settings[{{ setting.name }}][name]" value="{{ setting.name }}"/>
+                                    </td>
+                                    <td>
+                                        <input class="form-control input-sm" type="text" name="settings[{{ setting.name }}][value]" value="{{ setting.value }}"/>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="u-padding-b-l">
+                <input class="btn btn-primary" type="submit" value="{{ 'form.label.update'|trans([], 'settings') }}"
+                       name="UpdateButton"/>
+                <input class="btn btn-danger" type="submit" value="{{ 'form.label.delete'|trans([], 'settings') }}"
+                       name="DeleteButton"
+                       onclick="return confirm({{ 'title.confirm'|trans([], 'settings') }});"/>
+            </div>
+        </form>
+        <form class="panel panel-default u-margin-t-l" method="post" action="{{ path('hengebytes_settings_index') }}">
+            <div class="panel-body">
+                <h2 class="h3 u-margin-t-n">{{ 'form.label.new'|trans([], 'settings') }}</h2>
+                <div class="row u-margin-b-m">
+                    <div class="col-lg-6">
+                        <label for="new-kay">{{ 'form.label.name'|trans([], 'settings') }}:</label>
+                        <input id="new-kay" class="form-control" type="text" name="new[name]" value=""/>
+                    </div>
+                    <div class="col-lg-6">
+                        <label for="new-value">{{ 'form.label.value'|trans([], 'settings') }}:</label>
+                        <input id="new-value" class="form-control" type="text" name="new[value]" value=""/>
+                    </div>
+                </div>
+
+                <input class="btn btn-primary" type="submit" value="{{ 'form.label.create'|trans([], 'settings') }}" name="CreateButton"/>
+            </div>
+        </form>
+    </div>
+{% endblock %}

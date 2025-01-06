@@ -1,0 +1,19 @@
+parameters:
+    hengebytes.entity.setting.class: Hengebytes\SettingBundle\Entity\Setting
+    hengebytes.handler.setting.class: Hengebytes\SettingBundle\Handler\SettingHandler
+
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    hengebytes.handler.setting:
+        public: true
+        class: "%hengebytes.handler.setting.class%"
+        arguments:
+            $entityClass: '%hengebytes.entity.setting.class%'
+
+    Hengebytes\SettingBundle\Controller\SettingController:
+        tags: [ 'controller.service_arguments' ]
+
+    Hengebytes\SettingBundle\Interfaces\SettingHandlerInterface: "@hengebytes.handler.setting"
