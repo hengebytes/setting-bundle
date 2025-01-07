@@ -6,7 +6,7 @@ interface SettingHandlerInterface
 {
     public function get(string $name, ?string $default = null): ?string;
 
-    public function set(string $name, string $value): void;
+    public function set(string $name, string $value, bool $isSensitive): void;
 
     public function isProductionEnvironment(): bool;
 

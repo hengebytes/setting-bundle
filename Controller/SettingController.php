@@ -48,16 +48,20 @@ class SettingController extends AbstractController
         $allSettings = $post['settings'] ?? [];
         $selectedSettings = $post['selected_settings'] ?? [];
         if (count($selectedSettings) === 0) {
-            $errors[] = 'not_selected.update';
+            $errors[] = 'Select setting to update';
         } else {
             foreach ($selectedSettings as $selectedSetting) {
                 $updateSetting = $allSettings[$selectedSetting] ?? null;
                 if ($updateSetting !== null) {
-                    $this->settingHandler->set($updateSetting['name'], $updateSetting['value']);
+                    $this->settingHandler->set(
+                        $updateSetting['name'],
+                        $updateSetting['value'],
+                        $updateSetting['is_sensitive'] ?? false
+                    );
                     if ($updateSetting['name'] !== $selectedSetting) {
                         $this->settingHandler->remove($selectedSetting);
                     }
-                    $feedback = 'success.selected_update';
+                    $feedback = 'Selected settings are updated';
                 }
             }
         }
@@ -70,15 +74,19 @@ class SettingController extends AbstractController
         $newSettingData = $post['new'];
         $feedback = '';
         if (empty($newSettingData['name']) || !isset($newSettingData['value'])) {
-            $errors[] = 'empty_name';
+            $errors[] = 'Name of the new setting can not be empty';
         }
         $settingExist = $this->settingHandler->get($newSettingData['name']) !== null;
         if ($settingExist) {
-            $errors[] = 'name_exist';
+            $errors[] = 'Setting with specified name already exists';
         }
         if (count($errors) === 0) {
-            $this->settingHandler->set($newSettingData['name'], $newSettingData['value']);
-            $feedback = 'success.add';
+            $this->settingHandler->set(
+                $newSettingData['name'],
+                $newSettingData['value'],
+                $newSettingData['is_sensitive'] ?? false
+            );
+            $feedback = 'New setting is added';
 
             return [$errors, $feedback];
         }
@@ -92,13 +100,13 @@ class SettingController extends AbstractController
         $allSettings = $post['settings'] ?? [];
         $selectedSettings = $post['selected_settings'] ?? [];
         if (count($selectedSettings) === 0) {
-            $errors[] = 'not_selected.remove';
+            $errors[] = 'Select setting to remove';
         } else {
             foreach ($selectedSettings as $selectedSetting) {
                 $removeSetting = $allSettings[$selectedSetting] ?? null;
                 if ($removeSetting !== null) {
                     $this->settingHandler->remove($removeSetting['name']);
-                    $feedback = 'success.selected_remove';
+                    $feedback = 'Selected settings are removed';
                 }
             }
         }

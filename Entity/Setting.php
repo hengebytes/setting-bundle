@@ -4,7 +4,6 @@ namespace Hengebytes\SettingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
@@ -22,4 +21,7 @@ class Setting
 
     #[ORM\Column(type: Types::TEXT)]
     public string $value;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    public bool $isSensitive = false;
 }

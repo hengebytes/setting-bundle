@@ -3,34 +3,34 @@
         {% if errors is defined %}
             {% for error in errors %}
                 <div class="alert alert-danger">
-                    {{ error|trans([], 'settings') }}
+                    {{ error|trans }}
                 </div>
             {% endfor %}
         {% endif %}
         {% if feedback is defined and feedback %}
             <div class="alert alert-success">
-                {{ feedback|trans([], 'settings') }}
+                {{ feedback|trans }}
             </div>
         {% endif %}
 
         <form method="post" action="{{ path('hengebytes_settings_index') }}"
-                {% if is_production_env %}
-                    onsubmit="return prompt({{ 'title.prompt'|trans([], 'settings') }} + window.location.host) === window.location.host"
-                {% endif %}
+            {% if is_production_env %}
+                onsubmit="return prompt('{{ 'Please type current domain to update sensitive settings.'|trans }} ' + window.location.host) === window.location.host"
+            {% endif %}
         >
-            <h2 class="h3  u-margin-t-m">{{ 'title.index'|trans([], 'settings') }}</h2>
+            <h2 class="h3  u-margin-t-m">{{ 'Settings'|trans }}</h2>
             {% for group, settings in grouped_settings %}
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
+                <div class="card panel-primary">
+                    <div class="card-header">
                         <h3 class="panel-title">{{ group }}</h3>
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body">
                         <table class="table table-condensed u-margin-b-n">
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>{{ 'form.label.name'|trans([], 'settings') }}</th>
-                                <th>{{ 'form.label.value'|trans([], 'settings') }}</th>
+                                <th>{{ 'Name'|trans }}</th>
+                                <th>{{ 'Value'|trans }}</th>
                             </tr>
                             </thead>
                             <tbody class="existing-settings">
@@ -45,7 +45,19 @@
                                         <input class="form-control input-sm" type="text" name="settings[{{ setting.name }}][name]" value="{{ setting.name }}"/>
                                     </td>
                                     <td>
-                                        <input class="form-control input-sm" type="text" name="settings[{{ setting.name }}][value]" value="{{ setting.value }}"/>
+                                        <div class="input-group">
+                                            {% if setting.isSensitive %}
+                                                <span class="input-group-text">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                                                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"></path>
+                                                    </svg>
+                                                </span>
+                                                <input type="hidden" name="settings[{{ setting.name }}][is_sensitive]" value="{{ setting.isSensitive }}">
+                                                <input type="text" class="form-control input-sm" aria-label="Value input" name="settings[{{ setting.name }}][value]" value="" placeholder="*********">
+                                            {% else %}
+                                                <input type="text" class="form-control input-sm" aria-label="Value input" name="settings[{{ setting.name }}][value]" value="{{ setting.value }}">
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -54,29 +66,37 @@
                     </div>
                 </div>
             {% endfor %}
-            <div class="u-padding-b-l">
-                <input class="btn btn-primary" type="submit" value="{{ 'form.label.update'|trans([], 'settings') }}"
+            <div class="u-margin-t-m">
+                <input class="btn btn-primary" type="submit" value="{{ 'Update selected'|trans }}"
                        name="UpdateButton"/>
-                <input class="btn btn-danger" type="submit" value="{{ 'form.label.delete'|trans([], 'settings') }}"
+                <input class="btn btn-danger" type="submit" value="{{ 'Delete selected'|trans }}"
                        name="DeleteButton"
-                       onclick="return confirm({{ 'title.confirm'|trans([], 'settings') }});"/>
+                       onclick="return confirm('{{ 'Do you really want to delete selected settings?'|trans }}');"/>
             </div>
         </form>
-        <form class="panel panel-default u-margin-t-l" method="post" action="{{ path('hengebytes_settings_index') }}">
-            <div class="panel-body">
-                <h2 class="h3 u-margin-t-n">{{ 'form.label.new'|trans([], 'settings') }}</h2>
+        <form class="card panel-default u-margin-t-l" method="post" action="{{ path('hengebytes_settings_index') }}">
+            <div class="card-header">
+                <h3 class="panel-title">{{ 'New Setting'|trans }}</h3>
+            </div>
+            <div class="card-body">
                 <div class="row u-margin-b-m">
                     <div class="col-lg-6">
-                        <label for="new-kay">{{ 'form.label.name'|trans([], 'settings') }}:</label>
-                        <input id="new-kay" class="form-control" type="text" name="new[name]" value=""/>
+                        <label for="new-key">{{ 'Name'|trans }}:</label>
+                        <input id="new-key" class="form-control" type="text" name="new[name]" value=""/>
                     </div>
                     <div class="col-lg-6">
-                        <label for="new-value">{{ 'form.label.value'|trans([], 'settings') }}:</label>
-                        <input id="new-value" class="form-control" type="text" name="new[value]" value=""/>
+                        <label for="new-value">{{ 'Value'|trans }}:</label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">{{ 'Sensitive'|trans }}</span>
+                            <div class="input-group-text">
+                                <input id="new-sensitive" class="form-check-input" type="checkbox" name="new[is_sensitive]" value="1"  aria-label="Sensitive selector"/>
+                            </div>
+                            <input id="new-value" class="form-control" type="text" name="new[value]" value=""/>
+                        </div>
                     </div>
                 </div>
 
-                <input class="btn btn-primary" type="submit" value="{{ 'form.label.create'|trans([], 'settings') }}" name="CreateButton"/>
+                <input class="btn btn-primary" type="submit" value="{{ 'Create'|trans }}" name="CreateButton"/>
             </div>
         </form>
     </div>

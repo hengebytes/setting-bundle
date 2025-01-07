@@ -5,7 +5,7 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        <title>{% block page_title %}{{ 'title.index'|trans([],'concilioSettings') }}{% endblock %}</title>
+        <title>{% block page_title %}{{ 'Settings'|trans }}{% endblock %}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <meta name="robots" content="noindex, nofollow"/>
     {% endblock %}
@@ -19,18 +19,17 @@
     {% endblock %}
 </head>
 <body>
-{% block content %}
-    {% include '@Setting/index.html.twig' %}
-{% endblock %}
-{% block footer %}
     <div class="container">
         <hr>
-
+        {% block content %}
+            {% include '@Setting/index.html.twig' %}
+        {% endblock %}
+        {% block footer %}
         <footer>
-            <p>&copy; HengeBytes 2025</p>
+            <p class="text-center text-body-secondary">&copy; HengeBytes 2025</p>
         </footer>
+        {% endblock %}
     </div> <!-- /container -->
-{% endblock %}
 {% block footer_js %}
 {% endblock %}
 </body>

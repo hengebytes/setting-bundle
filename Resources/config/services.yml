@@ -1,6 +1,7 @@
 parameters:
     hengebytes.entity.setting.class: Hengebytes\SettingBundle\Entity\Setting
     hengebytes.handler.setting.class: Hengebytes\SettingBundle\Handler\SettingHandler
+    crypto_key: '%env(CRYPTO_KEY)%'
 
 services:
     _defaults:
@@ -17,3 +18,7 @@ services:
         tags: [ 'controller.service_arguments' ]
 
     Hengebytes\SettingBundle\Interfaces\SettingHandlerInterface: "@hengebytes.handler.setting"
+
+    Hengebytes\SettingBundle\Service\CryptoService:
+        arguments:
+            $cryptoKey: '%crypto_key%'

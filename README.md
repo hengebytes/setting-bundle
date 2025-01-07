@@ -4,6 +4,7 @@ Setting Bundle
 About bundle
 ---------------------------
 This bundle provides a simple way to manage settings in your Symfony application.
+Sensitive data is encrypted.
 
 
 Installation
@@ -37,6 +38,23 @@ This command requires you to have Composer installed globally, as explained
 in the [installation chapter](https://getcomposer.org/doc/00-intro.md)
 of the Composer documentation.
 
+#### Create the CRYPTO_KEY
+generated as follows:
+```php
+echo sodium_bin2hex(sodium_crypto_secretbox_keygen());
+```
+
+Add the generated key to your .env file:
+```
+CRYPTO_KEY=your_generated_key
+```
+
+Ensure that you have the variable in docker compose file:
+```
+    environment:
+      - CRYPTO_KEY=${CRYPTO_KEY}
+```
+
 Step 2: Enable the Bundle
 -------------------------
 
@@ -50,7 +68,6 @@ return [
 ];
 }
 ```
-
 
 Step 3: Config the Routing
 --------------------------

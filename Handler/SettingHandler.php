@@ -4,6 +4,7 @@ namespace Hengebytes\SettingBundle\Handler;
 
 use Hengebytes\SettingBundle\Entity\Setting;
 use Hengebytes\SettingBundle\Interfaces\SettingHandlerInterface;
+use Hengebytes\SettingBundle\Service\CryptoService;
 use Doctrine\Persistence\{ManagerRegistry, ObjectManager, ObjectRepository};
 
 class SettingHandler implements SettingHandlerInterface
@@ -14,29 +15,39 @@ class SettingHandler implements SettingHandlerInterface
 
     protected ObjectManager $em;
     protected ObjectRepository $repository;
+    protected CryptoService $cryptoService;
     private array $runTimeStorage = [];
 
-    public function __construct(ManagerRegistry $objectManager, protected string $entityClass)
+    public function __construct(ManagerRegistry $objectManager, protected string $entityClass, CryptoService $cryptoService)
     {
         $this->em = $objectManager->getManager();
         $this->repository = $this->em->getRepository($entityClass);
+        $this->cryptoService = $cryptoService;
     }
 
-    public function set(string $name, string $value): void
+    public function set(string $name, string $value, bool $isSensitive = false): void
     {
+        $originalValue = $value;
+        if ($isSensitive) {
+            $value = $this->cryptoService->encrypt($value);
+        }
+
         /** @var Setting $setting */
         $setting = $this->repository->findOneBy(['name' => $name]);
+
         if ($setting !== null) {
             $setting->value = $value;
+            $setting->isSensitive = $isSensitive;
         } else {
             $setting = $this->createEntity();
             $setting->name = $name;
             $setting->value = $value;
+            $setting->isSensitive = $isSensitive;
             $this->em->persist($setting);
         }
-        $this->em->flush();
 
-        $this->setRunTime($name, $value);
+        $this->em->flush();
+        $this->setRunTime($name, $originalValue);
     }
 
     public function createEntity(): Setting
@@ -78,6 +89,9 @@ class SettingHandler implements SettingHandlerInterface
         }
 
         $value = $setting->value;
+        if ($setting->isSensitive) {
+            $value = $this->cryptoService->decrypt($value);
+        }
         $this->setRunTime($name, $value);
 
         return $value;
