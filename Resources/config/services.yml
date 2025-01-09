@@ -17,6 +17,9 @@ services:
     Hengebytes\SettingBundle\Controller\SettingController:
         tags: [ 'controller.service_arguments' ]
 
+    Hengebytes\SettingBundle\Controller\ApiController:
+        tags: [ 'controller.service_arguments' ]
+
     Hengebytes\SettingBundle\Interfaces\SettingHandlerInterface: "@hengebytes.handler.setting"
 
     Hengebytes\SettingBundle\Service\CryptoService:

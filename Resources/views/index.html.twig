@@ -53,7 +53,7 @@
                                                     </svg>
                                                 </span>
                                                 <input type="hidden" name="settings[{{ setting.name }}][is_sensitive]" value="{{ setting.isSensitive }}">
-                                                <input type="text" class="form-control input-sm" aria-label="Value input" name="settings[{{ setting.name }}][value]" value="" placeholder="*********">
+                                                <input type="text" class="form-control input-sm" aria-label="Value input" name="settings[{{ setting.name }}][value]" value="" placeholder="{{ setting.value }}">
                                             {% else %}
                                                 <input type="text" class="form-control input-sm" aria-label="Value input" name="settings[{{ setting.name }}][value]" value="{{ setting.value }}">
                                             {% endif %}

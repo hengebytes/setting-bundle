@@ -1,0 +1,19 @@
+settings_get_list:
+    path: /settings/list
+    controller: Hengebytes\SettingBundle\Controller\ApiController::getGroupedSettings
+    methods: [GET]
+
+settings_create:
+    path: /settings
+    controller: Hengebytes\SettingBundle\Controller\ApiController::setSetting
+    methods: [POST]
+
+settings_update_list:
+    path: /settings/list
+    controller: Hengebytes\SettingBundle\Controller\ApiController::bulkUpdateAction
+    methods: [POST]
+
+settings_delete_list:
+    path: /settings/list
+    controller: Hengebytes\SettingBundle\Controller\ApiController::bulkRemoveAction
+    methods: [DELETE]

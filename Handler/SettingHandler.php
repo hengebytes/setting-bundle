@@ -115,6 +115,7 @@ class SettingHandler implements SettingHandlerInterface
         /** @var Setting $setting */
         foreach ($settings as $setting) {
             $groupName = 0;
+            $setting->value = $setting->isSensitive ? $this->maskSensitiveString($setting->value) : $setting->value;
             $nameArray = explode('/', $setting->name);
             if ($nameArray) {
                 $groupName = $nameArray[0];
@@ -144,5 +145,16 @@ class SettingHandler implements SettingHandlerInterface
     public function setOverridePrefix(string $prefix): void
     {
         $this->overridePrefix = $prefix;
+    }
+
+    private function maskSensitiveString(string $input): string
+    {
+        $input = $this->cryptoService->decrypt($input);
+
+        $start = substr($input, 0, 2);
+        $end = substr($input, -2);
+        $masked = str_repeat('*', 8);
+
+        return strlen($input) < 5 ? "****" : $start . $masked . $end;
     }
 }
