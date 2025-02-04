@@ -3,7 +3,7 @@ Setting Bundle
 
 About bundle
 ---------------------------
-This bundle provides a simple way to manage settings in your Symfony application.
+This bundle provides a simple way to manage settings in your Symfony application as a key-value.
 Sensitive data is encrypted. If you want to update the sensitive setting, you need to send the raw value again.
 The bundle provides an API to manage settings.
 
@@ -14,29 +14,9 @@ Installation
 Step 1: Download the Bundle
 ---------------------------
 
-Edit your project's `composer.json` file to require the bundle:
-
-```
-    "require" : {
-        ...
-        "hengebytes/setting-bundle" : "1.0.*",
-    }, 
-    "repositories" : [{ 
-        "type" : "git", 
-        "url" : "git@github.com:hengebytes/setting-bundle.git" 
-    }],
-    ...
-```
-
-Now, run:
-
 ```bash
     composer update
 ```
-
-This command requires you to have Composer installed globally, as explained
-in the [installation chapter](https://getcomposer.org/doc/00-intro.md)
-of the Composer documentation.
 
 #### Create the CRYPTO_KEY
 generated as follows:
@@ -140,7 +120,7 @@ DELETE requests should have the following body:
   "settings": ["setting/line1", "setting/line2", "setting/line3"]
 }
 ```
-`POST api/settings/list`
+`POST /api/settings/list`
 
 POST requests should have the following body:
 ```json

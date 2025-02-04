@@ -1,18 +1,22 @@
 {
     "name": "hengebytes/setting-bundle",
     "type": "symfony-bundle",
-    "description": "SettingBundle",
+    "description": "Key-value storage for Symfony with encryption",
     "keywords": ["SettingBundle"],
-    "license": "hengebytes",
+    "license": "MIT",
     "version":"1.0.0",
     "authors": [
         {
-            "name": "Ivan Ternovtsiy",
+            "name": "Ivan Ternovtsii",
             "email": "it@hengebytes.com"
         },
         {
-            "name": "Andrew Ternovtsiy",
-            "email": "at@hengebytes.com"
+            "name": "Andrew Ternovtsii",
+            "email": "endry666@gmail.com"
+        },
+        {
+            "name": "Volodymyr Kenidra",
+            "email": "vk@hengebytes.com"
         }
     ],
     "require": {
