@@ -4,6 +4,6 @@ namespace Hengebytes\SettingBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class SettingBundle extends Bundle
+class HBSettingBundle extends Bundle
 {
 }

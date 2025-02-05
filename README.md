@@ -44,7 +44,7 @@ Then, enable the bundle by adding it to the list of registered bundles:
 // config/bundles.php
 return [
     // ...
-    Hengebytes\SettingBundle\SettingBundle::class => ['all' => true],
+    Hengebytes\SettingBundle\HBSettingBundle::class => ['all' => true],
 ];
 }
 ```
