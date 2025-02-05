@@ -5,20 +5,6 @@
     "keywords": ["SettingBundle"],
     "license": "MIT",
     "version":"1.0.0",
-    "authors": [
-        {
-            "name": "Ivan Ternovtsii",
-            "email": "it@hengebytes.com"
-        },
-        {
-            "name": "Andrew Ternovtsii",
-            "email": "endry666@gmail.com"
-        },
-        {
-            "name": "Volodymyr Kenidra",
-            "email": "vk@hengebytes.com"
-        }
-    ],
     "require": {
         "php": ">=8.3",
         "doctrine/orm": "^2.10|^3.0",
