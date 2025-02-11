@@ -59,7 +59,7 @@ in the `app/config/routing.yml` file of your project:
 # app/config/routing.yml
 
 setting_routes:
-    resource: "@SettingBundle/Resources/config/routing.yml"
+    resource: "@HBSettingBundle/Resources/config/routing.yml"
     prefix:   /  # some admin path prefix
 ```
 
@@ -79,7 +79,7 @@ Step 5: API
 Include the following in your `config/routes.yaml` file:
 ```yaml
 setting_api:
-    resource: "@SettingBundle/Resources/config/api_routing.yml"
+    resource: "@HBSettingBundle/Resources/config/api_routing.yml"
     prefix: /api
 ```
 

@@ -3,12 +3,13 @@
 namespace Hengebytes\SettingBundle\Controller;
 
 use Hengebytes\SettingBundle\Interfaces\SettingHandlerInterface;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/settings', 'settings_')]
+#[Route('/settings', 'hengebytes_settings_api_')]
 readonly class ApiController
 {
     public function __construct(private SettingHandlerInterface $settingHandler)
@@ -32,7 +33,11 @@ readonly class ApiController
     #[Route('/list', 'update_list', methods: ['POST'])]
     public function bulkUpdateAction(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        try {
+            $data = $request->toArray();
+        } catch (JsonException $e) {
+            $data = $request->request->all();
+        }
         $settings = $data['settings'] ?? [];
 
         if (count($settings) === 0) {
@@ -55,7 +60,11 @@ readonly class ApiController
     #[Route('/', name: 'create', methods: ['POST'])]
     public function setSetting(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        try {
+            $data = $request->toArray();
+        } catch (JsonException $e) {
+            $data = $request->request->all();
+        }
 
         $name = $data['name'] ?? null;
         $value = $data['value'] ?? '';
@@ -81,7 +90,11 @@ readonly class ApiController
     #[Route('/list', 'delete_list', methods: ['DELETE'])]
     public function bulkRemoveAction(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        try {
+            $data = $request->toArray();
+        } catch (JsonException) {
+            $data = $request->request->all();
+        }
         $settingNames = $data['settings'] ?? [];
 
         if (count($settingNames) === 0) {

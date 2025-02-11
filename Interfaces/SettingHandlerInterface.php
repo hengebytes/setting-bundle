@@ -15,4 +15,6 @@ interface SettingHandlerInterface
     public function remove(string $name): void;
 
     public function setRunTime(string $name, ?string $runtimeValue);
+
+    public function getMultiple(array $names): array;
 }

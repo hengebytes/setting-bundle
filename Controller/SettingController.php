@@ -4,7 +4,8 @@ namespace Hengebytes\SettingBundle\Controller;
 
 use Hengebytes\SettingBundle\Interfaces\SettingHandlerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\{Request, Response};
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class SettingController extends AbstractController
 {
@@ -31,7 +32,7 @@ class SettingController extends AbstractController
         $groupedSettings = $this->settingHandler->getGrouped();
         ksort($groupedSettings);
 
-        return $this->render('@Setting/setting_layout.html.twig',
+        return $this->render('@HBSetting/setting_layout.html.twig',
             [
                 'action' => 'settings',
                 'is_production_env' => $this->settingHandler->isProductionEnvironment(),

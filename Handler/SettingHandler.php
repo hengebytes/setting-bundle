@@ -2,27 +2,22 @@
 
 namespace Hengebytes\SettingBundle\Handler;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Hengebytes\SettingBundle\Entity\Setting;
 use Hengebytes\SettingBundle\Interfaces\SettingHandlerInterface;
 use Hengebytes\SettingBundle\Service\CryptoService;
-use Doctrine\Persistence\{ManagerRegistry, ObjectManager, ObjectRepository};
 
 class SettingHandler implements SettingHandlerInterface
 {
     protected const string SETTING_NOT_DEFINED_INDICATOR = "\n!\t";
     /**  setting with this prefix will be first priority */
-    protected string $overridePrefix = '';
+    protected ?string $overridePrefix = null;
 
-    protected ObjectManager $em;
-    protected ObjectRepository $repository;
-    protected CryptoService $cryptoService;
     private array $runTimeStorage = [];
 
-    public function __construct(ManagerRegistry $objectManager, protected string $entityClass, CryptoService $cryptoService)
-    {
-        $this->em = $objectManager->getManager();
-        $this->repository = $this->em->getRepository($entityClass);
-        $this->cryptoService = $cryptoService;
+    public function __construct(
+        protected EntityManagerInterface $em, protected string $entityClass, protected CryptoService $cryptoService
+    ) {
     }
 
     public function set(string $name, string $value, bool $isSensitive = false): void
@@ -33,9 +28,9 @@ class SettingHandler implements SettingHandlerInterface
         }
 
         /** @var Setting $setting */
-        $setting = $this->repository->findOneBy(['name' => $name]);
+        $setting = $this->em->getRepository($this->entityClass)->findOneBy(['name' => $name]);
 
-        if ($setting !== null) {
+        if ($setting) {
             $setting->value = $value;
             $setting->isSensitive = $isSensitive;
         } else {
@@ -69,9 +64,11 @@ class SettingHandler implements SettingHandlerInterface
 
     public function get(string $name, $default = null): ?string
     {
-        $settingValue = $this->innerGet($this->overridePrefix . $name) ?? $this->innerGet($name);
+        if ($this->overridePrefix !== null) {
+            return $this->innerGet($this->overridePrefix . $name) ?? $this->innerGet($name) ?? $default;
+        }
 
-        return $settingValue ?? $default;
+        return $this->innerGet($name) ?? $default;
     }
 
     protected function innerGet(string $name): ?string
@@ -82,9 +79,10 @@ class SettingHandler implements SettingHandlerInterface
         }
 
         /** @var Setting $setting */
-        $setting = $this->repository->findOneBy(['name' => $name]);
+        $setting = $this->em->getRepository($this->entityClass)->findOneBy(['name' => $name]);
         if ($setting === null) {
             $this->setRunTime($name, self::SETTING_NOT_DEFINED_INDICATOR);
+
             return null;
         }
 
@@ -97,7 +95,38 @@ class SettingHandler implements SettingHandlerInterface
         return $value;
     }
 
-    public function getRunTime(string $name): ?string
+    public function getMultiple(array $names): array
+    {
+        $result = [];
+        foreach ($names as $key => $name) {
+            $runTimeValue = $this->getRunTime($name);
+            if ($runTimeValue === null) {
+                continue;
+            }
+            $result[$name] = $runTimeValue !== self::SETTING_NOT_DEFINED_INDICATOR ? $runTimeValue : null;
+            unset($names[$key]);
+        }
+
+        if (!$names) {
+            return $result;
+        }
+        $settings = $this->em->getRepository($this->entityClass)->findBy(['name' => $names]);
+
+        foreach ($settings as $setting) {
+            $value = $setting->value;
+            if ($setting->isSensitive) {
+                $value = $this->cryptoService->decrypt($value);
+            }
+            $result[$setting->name] = $value;
+
+            $this->setRunTime($setting->name, $value);
+        }
+
+        return $result;
+    }
+
+
+    private function getRunTime(string $name): ?string
     {
         return $this->runTimeStorage[$name] ?? null;
     }
@@ -105,7 +134,7 @@ class SettingHandler implements SettingHandlerInterface
     public function getGrouped(): array
     {
         return $this->group(
-            $this->repository->findAll()
+            $this->em->getRepository($this->entityClass)->findAll()
         );
     }
 
@@ -134,7 +163,7 @@ class SettingHandler implements SettingHandlerInterface
     public function remove(string $name): void
     {
         /** @var Setting $setting */
-        $setting = $this->repository->findOneBy(['name' => $name]);
+        $setting = $this->em->getRepository($this->entityClass)->findOneBy(['name' => $name]);
         if ($setting !== null) {
             $this->em->remove($setting);
             $this->em->flush();
@@ -142,7 +171,7 @@ class SettingHandler implements SettingHandlerInterface
         }
     }
 
-    public function setOverridePrefix(string $prefix): void
+    public function setOverridePrefix(?string $prefix): void
     {
         $this->overridePrefix = $prefix;
     }
@@ -150,11 +179,12 @@ class SettingHandler implements SettingHandlerInterface
     private function maskSensitiveString(string $input): string
     {
         $input = $this->cryptoService->decrypt($input);
+        if (strlen($input) < 5) {
+            return "****";
+        }
 
-        $start = substr($input, 0, 2);
-        $end = substr($input, -2);
-        $masked = str_repeat('*', 8);
-
-        return strlen($input) < 5 ? "****" : $start . $masked . $end;
+        return substr($input, 0, 2)
+            . str_repeat('*', 8)
+            . substr($input, -2);
     }
 }
