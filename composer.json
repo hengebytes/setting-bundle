@@ -4,7 +4,6 @@
     "description": "Key-value storage for Symfony with encryption",
     "keywords": ["SettingBundle"],
     "license": "MIT",
-    "version":"1.0.0",
     "require": {
         "php": ">=8.3",
         "doctrine/orm": "^2.10|^3.0",
