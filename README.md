@@ -1,6 +1,10 @@
 Setting Bundle
 ========================
 
+[![Latest Stable Version](https://poser.pugx.org/hengebytes/setting-bundle/v/stable.svg)](https://packagist.org/packages/hengebytes/setting-bundle)
+[![Total Downloads](https://poser.pugx.org/hengebytes/setting-bundle/downloads.svg)](https://packagist.org/packages/hengebytes/setting-bundle)
+[![License](https://poser.pugx.org/hengebytes/setting-bundle/license.svg)](https://packagist.org/packages/hengebytes/setting-bundle)
+
 About bundle
 ---------------------------
 This bundle provides a simple way to manage settings in your Symfony application as a key-value.
