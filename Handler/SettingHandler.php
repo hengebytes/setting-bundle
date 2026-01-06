@@ -87,7 +87,7 @@ class SettingHandler implements SettingHandlerInterface
         }
 
         $value = $setting->value;
-        if ($setting->isSensitive) {
+        if ($setting->isSensitive && $value !== '') {
             $value = $this->cryptoService->decrypt($value);
         }
         $this->setRunTime($name, $value);
@@ -114,7 +114,7 @@ class SettingHandler implements SettingHandlerInterface
 
         foreach ($settings as $setting) {
             $value = $setting->value;
-            if ($setting->isSensitive) {
+            if ($setting->isSensitive && $value !== '') {
                 $value = $this->cryptoService->decrypt($value);
             }
             $result[$setting->name] = $value;
@@ -152,9 +152,7 @@ class SettingHandler implements SettingHandlerInterface
             $return[$groupName][] = $setting;
         }
         foreach ($return as $group => $unused) {
-            uasort($return[$group], function (Setting $a, Setting $b) {
-                return $a->name <=> $b->name;
-            });
+            uasort($return[$group], static fn(Setting $a, Setting $b) => $a->name <=> $b->name);
         }
 
         return $return;
@@ -176,8 +174,11 @@ class SettingHandler implements SettingHandlerInterface
         $this->overridePrefix = $prefix;
     }
 
-    private function maskSensitiveString(string $input): string
+    private function maskSensitiveString(#[\SensitiveParameter] string $input): string
     {
+        if (!$input) {
+            return '';
+        }
         $input = $this->cryptoService->decrypt($input);
         if (strlen($input) < 5) {
             return "****";
