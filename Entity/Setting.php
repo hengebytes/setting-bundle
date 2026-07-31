@@ -2,11 +2,12 @@
 
 namespace Hengebytes\SettingBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Hengebytes\SettingBundle\Repository\SettingRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: SettingRepository::class)]
 #[UniqueEntity("name")]
 #[ORM\Table(name: 'hb_settings')]
 class Setting
