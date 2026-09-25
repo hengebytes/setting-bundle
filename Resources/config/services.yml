@@ -25,3 +25,7 @@ services:
     Hengebytes\SettingBundle\Service\CryptoService:
         arguments:
             $cryptoKey: '%crypto_key%'
+
+    Hengebytes\SettingBundle\Command\SettingManageCommand:
+        tags:
+            - { name: 'console.command' }
